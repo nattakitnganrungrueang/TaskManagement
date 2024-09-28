@@ -27,7 +27,7 @@ public class UserService {
     public User getUserDetailByEmail(String email) throws Exception{
         User userDetail = userRepository.findByEmail(email);
         if (userDetail == null) {
-            throw new Exception("Email not exists!");
+            throw new Exception("Email is not exists!");
         }
         return userDetail;
     }

@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
 
@@ -52,6 +52,30 @@ public class UserServiceTest {
             userService.registerUser("John Doe", "john.doe@example.com", "password123");
         });
         assertEquals("Email already exists!", exception.getMessage());
+    }
+
+    @Test
+    public void testFindByEmail_Success() throws Exception {
+        String email = "john.doe@example.com";
+        User mockUser = new User("John Doe", email);
+        when(userRepository.findByEmail(email)).thenReturn(mockUser);
+        User result = userService.getUserDetailByEmail(email);
+
+        assertNotNull(result);
+        assertEquals("John Doe", result.getName());
+        assertEquals(email, result.getEmail());
+        verify(userRepository, times(1)).findByEmail(email);
+    }
+
+    @Test
+    public void testFindByEmail_UserNotFound() {
+        String email = "john.doe@example.com";
+        when(userRepository.findByEmail(email)).thenReturn(null);
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            userService.getUserDetailByEmail(email);
+        });
+        assertEquals("Email is not exists!", exception.getMessage());
     }
 
 }

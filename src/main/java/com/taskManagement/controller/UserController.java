@@ -10,6 +10,7 @@ import com.taskManagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,8 +35,13 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    String GetProfile() {
-        return "test get profile ....";
+    public ResponseEntity<ApiResponse> getProfile(Authentication authentication){
+        try {
+            User user = userService.getUserDetailByEmail(authentication.getName());
+            return ResponseEntity.ok(new ApiResponse("GetProfile successfully", user));
+        }catch (Exception e){
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/register")
