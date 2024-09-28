@@ -24,5 +24,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User getUserDetailByEmail(String email) throws Exception{
+        User userDetail = userRepository.findByEmail(email);
+        if (userDetail == null) {
+            throw new Exception("Email not exists!");
+        }
+        return userDetail;
+    }
+
 
 }

@@ -1,8 +1,11 @@
 package com.taskManagement.controller;
 
+import com.taskManagement.model.request.AuthRequest;
 import com.taskManagement.model.request.UserDTO;
 import com.taskManagement.model.response.ApiResponse;
 import com.taskManagement.model.User;
+import com.taskManagement.model.response.AuthResponse;
+import com.taskManagement.service.AuthenticationService;
 import com.taskManagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,9 +19,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
     @PostMapping("/login")
-    String Login() {
-        return "test login ....";
+    public ResponseEntity<ApiResponse> Login(@RequestBody AuthRequest authRequest) {
+        try {
+            String token = authenticationService.authenticateAndGenerateToken(authRequest);
+            return ResponseEntity.ok(new ApiResponse("Login successfully", new AuthResponse(token)));
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ApiResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @GetMapping("/profile")
