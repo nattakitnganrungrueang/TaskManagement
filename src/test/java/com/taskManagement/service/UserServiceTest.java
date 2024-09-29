@@ -1,6 +1,7 @@
 package com.taskManagement.service;
 
 import com.taskManagement.model.User;
+import com.taskManagement.model.request.UserRequest;
 import com.taskManagement.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,6 +77,18 @@ public class UserServiceTest {
             userService.getUserDetailByEmail(email);
         });
         assertEquals("Email is not exists!", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdateUserProfile_Success() throws Exception {
+        String email = "john.doe@example.com";
+        User mockUser = new User("John Doe", email);
+        UserRequest updateUserRequest = new UserRequest("Jane Doe", "jane.doe@example.com");
+        when(userRepository.findByEmail(email)).thenReturn(mockUser);
+        userService.updateUserProfile(email, updateUserRequest);
+        assertEquals("Jane Doe", mockUser.getName());
+        assertEquals("jane.doe@example.com", mockUser.getEmail());
+        verify(userRepository, times(1)).save(mockUser);
     }
 
 }

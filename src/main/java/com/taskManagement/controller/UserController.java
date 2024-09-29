@@ -1,7 +1,7 @@
 package com.taskManagement.controller;
 
 import com.taskManagement.model.request.AuthRequest;
-import com.taskManagement.model.request.UserDTO;
+import com.taskManagement.model.request.UserRequest;
 import com.taskManagement.model.response.ApiResponse;
 import com.taskManagement.model.User;
 import com.taskManagement.model.response.AuthResponse;
@@ -45,12 +45,22 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> registerUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<ApiResponse> registerUser(@RequestBody UserRequest userRequest) {
         try {
-            User user = userService.registerUser(userDTO.getName(), userDTO.getEmail(), userDTO.getPassword());
+            User user = userService.registerUser(userRequest.getName(), userRequest.getEmail(), userRequest.getPassword());
             return new ResponseEntity<>(new ApiResponse("User registered successfully!", user.getId()), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new ApiResponse(e.getMessage(), null), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse> updateProfile(@RequestBody UserRequest userRequest, Authentication authentication) {
+        try {
+            userService.updateUserProfile(authentication.getName(), userRequest);
+            return new ResponseEntity<>(new ApiResponse("Profile updated successfully!", null), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ApiResponse("Profile update failed!", null), HttpStatus.BAD_REQUEST);
         }
     }
 
